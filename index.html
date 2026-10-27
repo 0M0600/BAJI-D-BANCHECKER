@@ -21,32 +21,11 @@ body::before{
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.45) !important; /* 45% noir, on voit Walhalla */
-  z-index: -1;
+  z-index: 0;
 }
 <style>
    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; font-weight: 900 !important; } /* Courier New pour look hacker + Gras max */
 
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-      overflow-x: hidden;
-      
-      /* --- ARRIÈRE-PLAN INTÉGRÉ --- */
-      /* Remplacez 'URL_DE_VOTRE_IMAGE' par l'endroit où vous hébergez l'image, ou utilisez le chemin local. */
-      /* J'ai ajouté un dégradé radial pour assombrir les bords et focaliser sur le centre. */
-      background-image: 
-        radial-gradient(circle, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.9) 80%),
-        url('https://ban-checker-free.netlify.app/image_0.png'); 
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed; /* L'image ne défile pas */
-      background-repeat: no-repeat;
-    }
 
     /* --- Animations Clés --- */
     @keyframes glitch {
@@ -227,7 +206,7 @@ body::before{
       <input type="tel" id="phone" placeholder="Ex: 243861234567...">
     </div>
 
-    <button class="check-btn" onclick="checkStatus()">VÉRIFI CE PETIT</button>
+    <button class="check-btn" onclick="checkStatus()">VÉRIFIER</button>
 
     <!-- Zone de résultat -->
     <div id="statusBox" class="status"></div>
