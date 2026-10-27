@@ -1,31 +1,51 @@
 <!DOCTYPE html>
 <html lang="fr">
-<style>
 <head>
   <meta charset="UTF-8">
 <!-- This site is hosted on Netlify. Anyone can build and deploy a site
      like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=b17231c9-74bc-42ae-9c1a-c832066466e4
      Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BAJI D JAP - BAN CHECKER</title> 
-<style>
-body{
-  background: url('walhalla.jpg') no-repeat center top !important;
-  background-size: cover !important;
-  background-attachment: fixed !important;
-  min-height: 100vh;
-  position: relative;
-}
-body::before{
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.45) !important; /* 45% noir, on voit Walhalla */
-  z-index: 0;
-}
-<style>
-   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; font-weight: 900 !important; } /* Courier New pour look hacker + Gras max */
+  <title>BAJI D JAP - BAN CHECKER</title>
+  <style>
+    /* --- Couleurs et Reset --- */
+    :root {
+      --bg-color: #050505; /* Noir très profond */
+      --card-bg: rgba(10, 12, 20, 0.9); /* Légère transparence pour voir le fond */
+      --text-main: #ffffff;
+      --text-muted: #b0b0b0;
+      --primary: #00ff41; /* Vert Matrix/Virus vif */
+      --primary-hover: #00cc33;
+      --accent: #ff0033; /* Rouge néon agressif */
+      --virus-green: rgba(0, 255, 65, 0.15); /* Vert virus subtil */
+      --shadow: 0 0 40px rgba(255, 0, 51, 0.6); /* Ombre rouge */
+      --glow-green: 0 0 10px rgba(0, 255, 65, 0.7);
+      --glow-red: 0 0 15px rgba(255, 0, 51, 0.8);
+    }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; font-weight: 900 !important; } /* Courier New pour look hacker + Gras max */
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow-x: hidden;
+      
+      /* --- ARRIÈRE-PLAN INTÉGRÉ --- */
+      /* Remplacez 'URL_DE_VOTRE_IMAGE' par l'endroit où vous hébergez l'image, ou utilisez le chemin local. */
+      /* J'ai ajouté un dégradé radial pour assombrir les bords et focaliser sur le centre. */
+      background-image: 
+        radial-gradient(circle, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.9) 80%),
+        url('https://ban-checker-free.netlify.app/image_0.png'); 
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed; /* L'image ne défile pas */
+      background-repeat: no-repeat;
+    }
 
     /* --- Animations Clés --- */
     @keyframes glitch {
@@ -119,7 +139,7 @@ body::before{
     
     /* Décorations Sataniques autour du titre */
     .title-wrap::before, .title-wrap::after {
-      content: "  ";
+      content: " ";
       color: var(--accent);
       font-size: 1.5rem;
       text-shadow: var(--glow-red);
@@ -171,7 +191,7 @@ body::before{
       position: relative; z-index: 1; font-weight: 900;
       text-shadow: 0 0 5px #000;
     }
-    .footer::before, .footer::after { content: "  "; }
+    .footer::before, .footer::after { content: " "; }
 
   </style>
 </head>
@@ -195,18 +215,18 @@ body::before{
     </div>
     
     <!-- Sous-titres dynamiques -->
-    <div id="title-hajun" class="sub-title active">L"ANGE SANS TETE</div>
+    <div id="title-hajun" class="sub-title active">L'ANGE SANS TETE</div>
     <div id="title-empereur" class="sub-title">BAJI D JAP<br> <span style="font-size:0.9rem; color:#fff; font-weight:900;">[L'ANGE SANS TETE]</span></div>
     <div id="title-baron" class="sub-title">L'ANGE SANS TETE<br> <span style="font-size:0.9rem; color:#fff; font-weight:900;">[L'ANGE SANS TETE]</span></div>
     <div id="title-esdeath" class="sub-title">LE PECHER DE L'AVARICE</div>
 
     <!-- Formulaire -->
     <div class="input-group">
-      <label for="phone">NUMÉRO WHATSAPP DE LA CIBLE</label>
+      <label for="phone">NUMÉRO DE LA CIBLE</label>
       <input type="tel" id="phone" placeholder="Ex: 243861234567...">
     </div>
 
-    <button class="check-btn" onclick="checkStatus()">VÉRIFIER</button>
+    <button class="check-btn" onclick="checkStatus()" >VÉRIFICATION</button>
 
     <!-- Zone de résultat -->
     <div id="statusBox" class="status"></div>
@@ -301,5 +321,3 @@ body::before{
 
 </body>
 </html>
-<script>
-
