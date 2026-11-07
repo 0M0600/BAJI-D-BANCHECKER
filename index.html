@@ -1,323 +1,877 @@
 <!DOCTYPE html>
+
 <html lang="fr">
+
 <head>
+
   <meta charset="UTF-8">
+
 <!-- This site is hosted on Netlify. Anyone can build and deploy a site
+
      like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=b17231c9-74bc-42ae-9c1a-c832066466e4
+
      Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
   <title>BAJI D JAP - BAN CHECKER</title>
+
   <style>
+
     /* --- Couleurs et Reset --- */
+
     :root {
-      --bg-color: #050505; /* Noir très profond */
-      --card-bg: rgba(10, 12, 20, 0.9); /* Légère transparence pour voir le fond */
+
+      --bg-color: #000000; /* Noir pur */
+
+      --card-bg: rgba(0, 0, 0, 0.84);
+
       --text-main: #ffffff;
+
       --text-muted: #b0b0b0;
-      --primary: #00ff41; /* Vert Matrix/Virus vif */
-      --primary-hover: #00cc33;
-      --accent: #ff0033; /* Rouge néon agressif */
-      --virus-green: rgba(0, 255, 65, 0.15); /* Vert virus subtil */
-      --shadow: 0 0 40px rgba(255, 0, 51, 0.6); /* Ombre rouge */
-      --glow-green: 0 0 10px rgba(0, 255, 65, 0.7);
-      --glow-red: 0 0 15px rgba(255, 0, 51, 0.8);
+
+      --primary: #ff1a2e; /* Rouge terminal */
+
+      --primary-hover: #cc1425;
+
+      --accent: #ff1a2e; /* Rouge néon */
+
+      --ok: #00ff41; /* Vert uniquement pour le résultat "non banni" */
+
+      --virus-green: rgba(255, 26, 46, 0.12);
+
+      --shadow: 0 0 18px rgba(255, 26, 46, 0.45);
+
+      --glow-green: 0 0 10px rgba(255, 26, 46, 0.7);
+
+      --glow-red: 0 0 15px rgba(255, 26, 46, 0.8);
+
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; font-weight: 900 !important; } /* Courier New pour look hacker + Gras max */
+
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', Courier, monospace; font-weight: 900 !important; }
+
+
 
     body {
+
       background-color: var(--bg-color);
+
       color: var(--text-main);
+
       display: flex;
+
       justify-content: center;
+
       align-items: center;
+
       min-height: 100vh;
+
       padding: 20px;
+
       overflow-x: hidden;
-      
-      /* --- ARRIÈRE-PLAN INTÉGRÉ --- */
-      /* Remplacez 'URL_DE_VOTRE_IMAGE' par l'endroit où vous hébergez l'image, ou utilisez le chemin local. */
-      /* J'ai ajouté un dégradé radial pour assombrir les bords et focaliser sur le centre. */
-      background-image: 
-        radial-gradient(circle, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.9) 80%),
-        url('https://ban-checker-free.netlify.app/image_0.png'); 
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed; /* L'image ne défile pas */
-      background-repeat: no-repeat;
+
     }
+
+
+
+    /* --- Pluie de chiffres rouges --- */
+
+    canvas#rain { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: .45; }
+
+
 
     /* --- Animations Clés --- */
+
     @keyframes glitch {
+
       0% { text-shadow: 3px 0 var(--accent), -3px 0 #00e5ff; }
+
       20% { text-shadow: -3px 0 var(--accent), 3px 0 #00e5ff; }
+
       40% { text-shadow: 3px 0 var(--accent), -3px 0 #00e5ff; }
+
       60% { text-shadow: -3px 0 var(--accent), 3px 0 #00e5ff; }
+
       80% { text-shadow: 3px 0 var(--accent), -3px 0 #00e5ff; }
+
       100% { text-shadow: -3px 0 var(--accent), 3px 0 #00e5ff; }
+
     }
 
+
+
     @keyframes pulse-border-red {
-      0% { box-shadow: 0 0 0 0 rgba(255, 0, 51, 0.7); }
-      70% { box-shadow: 0 0 0 15px rgba(255, 0, 51, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(255, 0, 51, 0); }
+
+      0% { box-shadow: 0 0 0 0 rgba(255, 26, 46, 0.7); }
+
+      70% { box-shadow: 0 0 0 15px rgba(255, 26, 46, 0); }
+
+      100% { box-shadow: 0 0 0 0 rgba(255, 26, 46, 0); }
+
     }
+
+
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
+
+
     @keyframes characterMove {
+
       0%, 100% { transform: translateY(0) translateX(-50%) scale(1); }
+
       50% { transform: translateY(-15px) translateX(-49%) scale(1.02); }
+
     }
-    
-    /* Animation Matrix Virus */
+
+
+
     @keyframes matrixBg {
+
       0% { background-position: 0% 0%; }
+
       100% { background-position: 0% 100%; }
+
     }
+
+
 
     /* --- Conteneur Principal (Card) --- */
+
     .card {
+
       background: var(--card-bg);
+
       padding: 50px 35px;
-      border-radius: 10px; /* Bords plus nets */
+
+      border-radius: 6px;
+
       box-shadow: var(--shadow);
+
       width: 100%;
+
       max-width: 480px;
+
       text-align: center;
-      border: 3px solid var(--accent); /* Bordure rouge épaisse */
+
+      border: 2px solid var(--accent);
+
       position: relative;
+
+      z-index: 2;
+
       overflow: hidden;
+
       animation: fadeIn 1s ease-out;
-      backdrop-filter: blur(5px); /* Flou derrière pour la lisibilité */
+
+      backdrop-filter: blur(2px);
+
     }
-    
-    /* Overlay Effet Virus/Matrix dans la carte */
+
+
+
     .card::before {
+
       content: "";
+
       position: absolute;
+
       top: 0; left: 0; width: 100%; height: 200%;
-      background: linear-gradient(180deg, rgba(0,255,65,0) 0%, var(--virus-green) 50%, rgba(0,255,65,0) 100%);
+
+      background: linear-gradient(180deg, rgba(255,26,46,0) 0%, var(--virus-green) 50%, rgba(255,26,46,0) 100%);
+
       background-size: 100% 20px;
+
       animation: matrixBg 10s linear infinite;
+
       z-index: -1;
+
       opacity: 0.5;
+
     }
+
+
 
     /* --- Menu Trois Points --- */
+
     .menu-container { position: absolute; top: 15px; right: 15px; z-index: 10; }
+
     .menu-dots { font-size: 2rem; color: var(--accent); cursor: pointer; transition: 0.3s; user-select: none; text-shadow: var(--glow-red); }
+
     .menu-dots:hover { color: var(--text-main); text-shadow: 0 0 10px #fff; }
 
+
+
     .menu-dropdown {
-      position: absolute; top: 35px; right: 0; background: #000; border: 2px solid var(--primary); border-radius: 5px;
-      width: 200px; box-shadow: 0 0 20px rgba(0,255,65,0.5); display: none; overflow: hidden; z-index: 11;
+
+      position: absolute; top: 35px; right: 0; background: #000; border: 2px solid var(--primary); border-radius: 4px;
+
+      width: 200px; box-shadow: 0 0 20px rgba(255,26,46,0.5); display: none; overflow: hidden; z-index: 11;
+
     }
+
     .menu-dropdown.show { display: block; animation: fadeIn 0.3s ease; }
-    .menu-item { padding: 15px; color: var(--primary); cursor: pointer; text-align: left; font-size: 1rem; text-transform: uppercase; border-bottom: 1px solid rgba(0,255,65,0.3); transition: 0.3s; }
+
+    .menu-item { padding: 15px; color: var(--primary); cursor: pointer; text-align: left; font-size: 1rem; text-transform: uppercase; border-bottom: 1px solid rgba(255,26,46,0.3); transition: 0.3s; }
+
     .menu-item:last-child { border-bottom: none; }
-    .menu-item:hover { background: rgba(0,255,65,0.2); color: #fff; text-shadow: var(--glow-green); }
-    .menu-item.active { background: rgba(0,255,65,0.3); color: #fff; font-weight: 900; text-shadow: var(--glow-green); border-left: 4px solid var(--primary); }
 
-    /* --- Zone Personnage (Désactivée car fond global utilisé) --- */
-    /*
-    .character-bg {
-      position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
-      width: 100%; height: auto; max-height: 80%; object-fit: contain; opacity: 0.15; z-index: 0; pointer-events: none;
-      animation: characterMove 6s infinite ease-in-out; display: none;
-    }
-    .character-bg.active { display: block; }
-    */
+    .menu-item:hover { background: rgba(255,26,46,0.2); color: #fff; text-shadow: var(--glow-green); }
 
-    /* --- Titres Stylés, Gras et Animés --- */
+    .menu-item.active { background: rgba(255,26,46,0.3); color: #fff; font-weight: 900; text-shadow: var(--glow-green); border-left: 4px solid var(--primary); }
+
+
+
+    /* --- Titres --- */
+
     .main-title {
-      font-size: 1.8rem; font-weight: 900; color: #fff; text-transform: uppercase;
+
+      font-size: 1.8rem; font-weight: 900; color: var(--accent); text-transform: uppercase;
+
       letter-spacing: 1px; margin-bottom: 10px; position: relative; z-index: 1;
+
       text-shadow: var(--glow-red), 0 0 5px #000;
+
       animation: glitch 2s infinite;
+
     }
-    
-    /* Décorations Sataniques autour du titre */
+
+
+
     .title-wrap::before, .title-wrap::after {
+
       content: " ";
+
       color: var(--accent);
+
       font-size: 1.5rem;
+
       text-shadow: var(--glow-red);
+
     }
+
+
 
     .sub-title {
-      font-size: 1.2rem; color: var(--primary); font-weight: 900; text-transform: uppercase;
+
+      font-size: 1.2rem; color: #fff; font-weight: 900; text-transform: uppercase;
+
       letter-spacing: 2px; margin-bottom: 30px; position: relative; z-index: 1;
-      display: none; text-shadow: var(--glow-green);
+
+      display: none; text-align: left; padding: 12px 6px 12px 14px;
+
+      border-left: 4px solid var(--accent); background: rgba(255,26,46,0.12);
+
     }
+
     .sub-title.active { display: block; animation: fadeIn 0.5s ease; }
 
-    /* --- Input Group --- */
-    .input-group { margin-bottom: 25px; text-align: left; position: relative; z-index: 1; }
-    label { display: block; font-size: 0.9rem; margin-bottom: 10px; color: #fff; font-weight: 900; text-transform: uppercase; text-shadow: 0 0 5px #000;}
-    input {
-      width: 100%; padding: 16px 20px; border-radius: 5px; border: 2px solid var(--primary);
-      background: rgba(0, 0, 0, 0.8); color: var(--primary); font-size: 1.1rem; outline: none;
-      transition: all 0.3s; font-weight: 900; box-shadow: inset 0 0 10px rgba(0,255,65,0.2);
-    }
-    input:focus { border-color: #fff; box-shadow: var(--glow-green); color: #fff; }
-    input::placeholder { color: rgba(0,255,65,0.5); font-weight: 900; }
 
-    /* --- Bouton Animé, Gras et Cool --- */
-    .check-btn {
-      width: 100%; padding: 16px; background: none; color: var(--accent);
-      font-weight: 900; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px;
-      border: 3px solid var(--accent); border-radius: 5px; cursor: pointer; position: relative; z-index: 1;
-      transition: all 0.3s; overflow: hidden;
-      animation: pulse-border-red 2s infinite;
-      text-shadow: var(--glow-red);
+
+    /* --- Input Group --- */
+
+    .input-group { margin-bottom: 25px; text-align: left; position: relative; z-index: 1; }
+
+    label { display: block; font-size: 0.9rem; margin-bottom: 10px; color: #fff; font-weight: 900; text-transform: uppercase; text-shadow: 0 0 5px #000;}
+
+    input {
+
+      width: 100%; padding: 16px 20px; border-radius: 4px; border: 2px solid var(--primary);
+
+      background: #000; color: #fff; font-size: 1.1rem; outline: none;
+
+      transition: all 0.3s; font-weight: 900; box-shadow: inset 0 0 14px rgba(255,26,46,0.25);
+
     }
+
+    input:focus { border-color: #fff; box-shadow: var(--glow-green); color: #fff; }
+
+    input::placeholder { color: #8a1a24; font-weight: 900; }
+
+
+
+    /* --- Bouton --- */
+
+    .check-btn {
+
+      width: 100%; padding: 16px; background: none; color: var(--accent);
+
+      font-weight: 900; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px;
+
+      border: 2px solid var(--accent); border-radius: 4px; cursor: pointer; position: relative; z-index: 1;
+
+      transition: all 0.3s; overflow: hidden;
+
+      animation: pulse-border-red 2s infinite;
+
+      text-shadow: var(--glow-red);
+
+    }
+
     .check-btn:hover { background: var(--accent); color: #000; text-shadow: none; box-shadow: 0 0 30px var(--accent); transform: scale(1.03); }
+
     .check-btn:active { transform: translateY(2px) scale(1); }
 
+
+
     /* --- Zone de Statut (Résultat) --- */
+
     .status { margin-top: 30px; padding: 20px; border-radius: 5px; font-weight: 900; font-size: 1rem; display: none; position: relative; z-index: 1; animation: fadeIn 0.4s ease; text-transform: uppercase; border-width: 2px; border-style: solid;}
-    
-    .active { background: rgba(0, 50, 20, 0.9); color: var(--primary); border-color: var(--primary); box-shadow: var(--glow-green); text-shadow: var(--glow-green); }
-    
+
+
+
+    .status.active { background: rgba(0, 50, 20, 0.9); color: var(--ok); border-color: var(--ok); box-shadow: 0 0 10px rgba(0,255,65,0.7); text-shadow: 0 0 10px rgba(0,255,65,0.7); }
+
+
+
     .banned { background: rgba(60, 0, 0, 0.9); color: #fff; border-color: var(--accent); box-shadow: var(--glow-red); text-shadow: var(--glow-red); animation: glitch 0.3s infinite; }
-    
+
+
+
     .loading { background: rgba(0, 0, 50, 0.9); color: #fff; border-color: #00e5ff; box-shadow: 0 0 15px #00e5ff; text-shadow: 0 0 10px #00e5ff;}
 
+
+
     /* --- Footer --- */
-    .footer { 
-      margin-top: 40px; font-size: 0.8rem; color: var(--accent); 
-      text-transform: uppercase; letter-spacing: 1px; 
+
+    .footer {
+
+      margin-top: 40px; font-size: 0.8rem; color: var(--accent);
+
+      text-transform: uppercase; letter-spacing: 1px;
+
       position: relative; z-index: 1; font-weight: 900;
+
       text-shadow: 0 0 5px #000;
+
     }
+
     .footer::before, .footer::after { content: " "; }
 
+
+
+    /* ===== ÉCRAN D'ENTRÉE (walhalla) ===== */
+
+    #intro {
+
+      position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center;
+
+      justify-content: center; text-align: center; gap: 38px; padding: 24px;
+
+      background: linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.25) 40%, rgba(0,0,0,.85)),
+
+        url("walhalla.JPG") center/cover no-repeat,
+
+        radial-gradient(circle at 50% 30%, #5a0014, #050001 70%);
+
+      transition: opacity .7s ease, visibility .7s;
+
+    }
+
+    #intro.gone { opacity: 0; visibility: hidden; }
+
+    #intro::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+
+      background: repeating-linear-gradient(0deg, rgba(0,0,0,.25) 0 2px, transparent 2px 4px); }
+
+    .intro-title { position: relative; z-index: 2; max-width: 640px; }
+
+    .line1, .line2 { display: block; letter-spacing: .06em; }
+
+    .line1 { font-size: clamp(2.6rem, 13vw, 5.4rem); color: #fff;
+
+      text-shadow: 3px 0 var(--accent), -3px 0 #00e5ff, 0 0 28px rgba(255,0,51,.8); }
+
+    .line2 { margin-top: 14px; font-size: clamp(1rem, 5vw, 1.6rem); line-height: 1.35; color: var(--ok);
+
+      text-shadow: 0 0 14px rgba(0,255,65,.8); }
+
+    #enter { position: relative; z-index: 2; cursor: pointer; font-size: clamp(1rem, 4.6vw, 1.3rem);
+
+      letter-spacing: .14em; color: var(--accent); background: rgba(20,0,5,.7); border: 3px solid var(--accent);
+
+      border-radius: 14px; padding: 18px 26px; min-height: 4rem; min-width: min(86vw, 360px);
+
+      text-shadow: 0 0 10px var(--accent);
+
+      box-shadow: 0 0 22px rgba(255,0,51,.7), inset 0 0 18px rgba(255,0,51,.35); }
+
+    #enter:focus-visible { outline: 3px solid var(--ok); outline-offset: 4px; }
+
+
+
+    /* ===== ÉCRITURE « À PEINE » ===== */
+
+    .ch.h { visibility: hidden; }
+
+    .ch.cur { box-shadow: 3px 0 0 var(--accent); }
+
+    .pre { opacity: .12; transition: opacity .12s, filter .4s; }
+
+    .pre.on { opacity: .55; filter: blur(.5px); }
+
+    .pre.done { opacity: 1; filter: none; }
+
+
+
+    @media (prefers-reduced-motion: reduce) { canvas#rain { display: none; } }
+
   </style>
+
 </head>
+
 <body>
 
-  <div class="card">
-    <!-- Menu caché -->
-    <div class="menu-container">
-      <div class="menu-dots" onclick="toggleMenu()">&#8942;</div>
-      <div id="menuDropdown" class="menu-dropdown">
-        <div class="menu-item active" onclick="selectPlace('hajun')">BAJI D JAP</div>
-        <div class="menu-item" onclick="selectPlace('empereur')">BAJI D JAP</div>
-        <div class="menu-item" onclick="selectPlace('baron')">L'ANGE SANS TETE</div>
-        <div class="menu-item" onclick="selectPlace('esdeath')">L'AVARICE</div>
-      </div>
+
+
+  <canvas id="rain"></canvas>
+
+
+
+  <!-- ÉCRAN D'ENTRÉE -->
+
+  <section id="intro">
+
+    <div class="intro-title">
+
+      <span class="line1" id="iL1">BAJI D JAP</span>
+
+      <span class="line2" id="iL2">L'ANGE SANS TÊTE … LE PÊCHER DE L'AVARICE</span>
+
     </div>
+
+    <button id="enter" type="button">SYSTÈME ZODYL CHECK</button>
+
+  </section>
+
+
+
+  <div class="card">
+
+    <!-- Menu caché -->
+
+    <div class="menu-container">
+
+      <div class="menu-dots" onclick="toggleMenu()">&#8942;</div>
+
+      <div id="menuDropdown" class="menu-dropdown">
+
+        <div class="menu-item active" onclick="selectPlace('hajun')">BAJI D JAP</div>
+
+        <div class="menu-item" onclick="selectPlace('empereur')">BAJI D JAP</div>
+
+        <div class="menu-item" onclick="selectPlace('baron')">L'ANGE SANS TETE</div>
+
+        <div class="menu-item" onclick="selectPlace('esdeath')">L'AVARICE</div>
+
+      </div>
+
+    </div>
+
+
 
     <!-- Titres avec décorations occultes -->
+
     <div class="title-wrap">
+
       <h1 class="main-title">BAN CHECK FREE BY BAJI D JAP</h1>
+
     </div>
+
     
+
     <!-- Sous-titres dynamiques -->
+
     <div id="title-hajun" class="sub-title active">L'ANGE SANS TETE</div>
+
     <div id="title-empereur" class="sub-title">BAJI D JAP<br> <span style="font-size:0.9rem; color:#fff; font-weight:900;">[L'ANGE SANS TETE]</span></div>
+
     <div id="title-baron" class="sub-title">L'ANGE SANS TETE<br> <span style="font-size:0.9rem; color:#fff; font-weight:900;">[L'ANGE SANS TETE]</span></div>
+
     <div id="title-esdeath" class="sub-title">LE PECHER DE L'AVARICE</div>
 
+
+
     <!-- Formulaire -->
+
     <div class="input-group">
+
       <label for="phone">NUMÉRO DE LA CIBLE</label>
+
       <input type="tel" id="phone" placeholder="Ex: 243861234567...">
+
     </div>
+
+
 
     <button class="check-btn" onclick="checkStatus()" >VÉRIFICATION</button>
 
+
+
     <!-- Zone de résultat -->
+
     <div id="statusBox" class="status"></div>
 
+
+
     <!-- Footer -->
+
     <div class="footer">ʙᴀᴊɪ•ᴅ•ᴊᴀᴘ ⚖️…ʟ’ᴀɴɢᴇ ᴤᴀɴᴤ ᴛÊᴛᴇ…</div>
+
   </div>
 
+
+
   <script>
+
     // Configuration des textes de bannissement par place (Gras conservé par le CSS global)
+
     const banMessages = {
+
       hajun: " ᴛ’ᴀᴜʀᴀɪᴤ ᴊᴀᴍᴀɪᴤ ᴅÛ ᴄʀᴏɪᴤᴇʀ ᴍᴀ ʀᴏᴜᴛᴇ…ᴍᴀɪɴᴛᴇɴᴀɴᴛ ᴅᴏʀᴤ ᴘᴏᴜʀ ᴛᴏᴜᴊᴏᴜʀᴤ…👣ʙᴀᴊɪ•ᴅ•ᴊᴀᴘ ⚖️…ʟ’ᴀɴɢᴇ ᴤᴀɴᴤ ᴛÊᴛᴇ",
+
      empereur: " 𝑷𝑨𝑹 𝑴𝑶𝑵 𝑵𝑶𝑴 : 𝑩𝑨𝑱𝑰•𝑫•𝑱𝑨𝑷 ⚖️…𝑳’𝑨𝑵𝑮𝑬 𝑺𝑨𝑵𝑺 𝑻Ê𝑻𝑬… 𝑻𝑼 𝑬𝑺 𝑴𝑰𝑺𝑬 À ",
+
       esdeath: "𝑪𝒐𝒏𝒕𝒊𝒏𝒖𝒆𝒛 𝒅𝒆 𝒓𝒂𝒎𝒑𝒆𝒓, 𝒍𝒂 𝒗𝒖𝒆 𝒆𝒔𝒕 𝒃𝒆𝒍𝒍𝒆 𝒒𝒖𝒂𝒏𝒅 𝒋𝒆 𝒗𝒐𝒖𝒔 𝒓𝒆𝒗𝒂𝒓𝒊𝒄𝒆… 𝒂𝒍𝒊𝒂𝒔 𝒍’𝒂𝒏𝒈𝒆 𝒔𝒂𝒏𝒔 𝒕ê𝒕𝒆…"
+
     
+
 };
+
+
 
     let currentPlace = 'hajun'; // Place par défaut
 
+
+
     // Gestion du menu
+
     function toggleMenu() {
+
       document.getElementById('menuDropdown').classList.toggle('show');
+
     }
+
+
 
     // Fermer le menu si on clique ailleurs
+
     window.onclick = function(event) {
+
       if (!event.target.matches('.menu-dots')) {
+
         var dropdowns = document.getElementsByClassName("menu-dropdown");
+
         for (var i = 0; i < dropdowns.length; i++) {
+
           var openDropdown = dropdowns[i];
+
           if (openDropdown.classList.contains('show')) {
+
             openDropdown.classList.remove('show');
+
           }
+
         }
+
       }
+
     }
+
+
 
     // Changement de place/personnage
+
     function selectPlace(placeId) {
+
       currentPlace = placeId;
+
       toggleMenu();
 
+
+
       // Mettre à jour l'item actif dans le menu
+
       const items = document.querySelectorAll('.menu-item');
+
       items.forEach(item => item.classList.remove('active'));
+
       event.target.classList.add('active');
 
+
+
       // Masquer tous les sous-titres
+
       const titles = document.querySelectorAll('.sub-title');
+
       titles.forEach(title => title.classList.remove('active'));
+
       
+
       // Afficher le sous-titre correspondant
+
       document.getElementById('title-' + placeId).classList.add('active');
 
+
+
       // Réinitialiser la zone de statut
+
       const box = document.getElementById('statusBox');
+
       box.style.display = "none";
+
       box.innerHTML = "";
+
     }
+
+
 
     // Logique de vérification simulée
+
     async function checkStatus() {
+
       const phoneInput = document.getElementById('phone').value.replace(/[^0-9]/g, '');
+
       const box = document.getElementById('statusBox');
 
+
+
       if (!phoneInput || phoneInput.length < 8) {
+
         box.className = "status banned";
+
         box.innerText = "❌ ERREUR SYSTÈME : NUMÉRO INVALIDE. INDICATIF OBLIGATOIRE (EX: 243...).";
+
         box.style.display = "block";
+
         return;
+
       }
+
+
 
       box.className = "status loading";
+
       box.innerText = "⏳ INJECTION DES PROTOCOLES... ANALYSE PAR BAJI D JAP L'ANGE SANS TETE...";
+
       box.style.display = "block";
 
+
+
       // Simulation du délai de vérification (2 secondes)
+
       await new Promise(resolve => setTimeout(resolve, 2000));
 
+
+
       // Logique factice : Banni si le dernier chiffre est impair
+
       const isBanned = parseInt(phoneInput.slice(-1)) % 2 !== 0;
 
+
+
       if (!isBanned) {
+
         box.className = "status active";
+
         box.innerText = "✅ STATUT : CONTINNUE DE FUIR ET MANGE DU POULET";
+
       } else {
+
         box.className = "status banned";
+
         box.innerText = banMessages[currentPlace];
+
       }
+
     }
+
   </script>
 
+
+
+  <!-- Décor : pluie rouge + écriture « à peine » + écran d'entrée (aucun impact sur la logique ci-dessus) -->
+
+  <script>
+
+    (function () {
+
+      var wait = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+
+
+
+      /* Pluie de chiffres rouges */
+
+      var cv = document.getElementById('rain'), cx = cv.getContext('2d'), sz = 16, cols, drops;
+
+      function init() {
+
+        cv.width = innerWidth; cv.height = innerHeight;
+
+        cols = Math.floor(cv.width / sz); drops = [];
+
+        for (var i = 0; i < cols; i++) drops.push(Math.random() * -40);
+
+        cx.fillStyle = '#000'; cx.fillRect(0, 0, cv.width, cv.height);
+
+      }
+
+      init(); addEventListener('resize', init);
+
+      setInterval(function () {
+
+        cx.fillStyle = 'rgba(0,0,0,.07)'; cx.fillRect(0, 0, cv.width, cv.height);
+
+        cx.font = sz + 'px monospace';
+
+        for (var i = 0; i < cols; i++) {
+
+          var y = drops[i] * sz;
+
+          cx.fillStyle = '#d4001a'; cx.fillText(Math.floor(Math.random() * 10), i * sz, y - sz);
+
+          cx.fillStyle = '#ff5a66'; cx.fillText(Math.floor(Math.random() * 10), i * sz, y);
+
+          if (y > cv.height && Math.random() > .975) drops[i] = 0;
+
+          drops[i]++;
+
+        }
+
+      }, 70);
+
+
+
+      /* Prépare un texte : chaque lettre cachée (la mise en page ne bouge pas) */
+
+      function mk(el) {
+
+        var t = el.textContent.replace(/\s+/g, ' ').trim(), sp = [];
+
+        el.textContent = '';
+
+        Array.from(t).forEach(function (c) {
+
+          var s = document.createElement('span');
+
+          s.className = 'ch h'; s.textContent = c;
+
+          el.appendChild(s); sp.push(s);
+
+        });
+
+        el.classList.add('pre');
+
+        return { el: el, sp: sp };
+
+      }
+
+      function mkPh(el) {
+
+        var t = el.placeholder; el.placeholder = '\u00a0'; el.classList.add('pre');
+
+        return { el: el, ph: Array.from(t) };
+
+      }
+
+      var delay = function () { return 45 + Math.random() * 65 + (Math.random() < .08 ? 200 : 0); };
+
+
+
+      /* Écriture « à peine » : lettre par lettre, hésitante, pâle puis qui s'allume */
+
+      async function typeAll(items) {
+
+        await wait(450);
+
+        for (var k = 0; k < items.length; k++) {
+
+          var it = items[k]; it.el.classList.add('on');
+
+          if (it.ph) {
+
+            var s = '';
+
+            for (var j = 0; j < it.ph.length; j++) { s += it.ph[j]; it.el.placeholder = s; await wait(delay()); }
+
+          } else {
+
+            var prev = null;
+
+            for (var i = 0; i < it.sp.length; i++) {
+
+              it.sp[i].classList.remove('h');
+
+              if (prev) prev.classList.remove('cur');
+
+              it.sp[i].classList.add('cur'); prev = it.sp[i];
+
+              await wait(delay());
+
+            }
+
+            if (prev) prev.classList.remove('cur');
+
+          }
+
+          it.el.classList.add('done'); await wait(90);
+
+          it.el.classList.remove('done'); await wait(70);
+
+          it.el.classList.add('done'); await wait(110);
+
+          it.el.classList.remove('pre', 'on', 'done');
+
+          await wait(150);
+
+        }
+
+      }
+
+
+
+      var introItems = [mk(document.getElementById('iL1')), mk(document.getElementById('iL2')), mk(document.getElementById('enter'))];
+
+      var cardItems = [
+
+        mk(document.querySelector('.main-title')),
+
+        mk(document.getElementById('title-hajun')),
+
+        mk(document.querySelector('label[for="phone"]')),
+
+        mkPh(document.getElementById('phone')),
+
+        mk(document.querySelector('.check-btn')),
+
+        mk(document.querySelector('.footer'))
+
+      ];
+
+
+
+      document.getElementById('enter').addEventListener('click', function () {
+
+        document.getElementById('intro').classList.add('gone');
+
+        typeAll(cardItems);
+
+      });
+
+
+
+      typeAll(introItems);
+
+    })();
+
+  </script>
+
+
+
 </body>
+
 </html>
+
+
